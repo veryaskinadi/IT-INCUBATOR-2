@@ -51,7 +51,7 @@ postsRouter.delete('/:id',(request: Request<{id: string}>, response: Response) =
     response.sendStatus(204)
 })
 
-postsRouter.put('/:id', (request: UpdatePostRequestModel, response: Response) => {
+postsRouter.put('/:id', createPostValidator, (request: UpdatePostRequestModel, response: Response) => {
     let post = posts.find(p => p.id === request.params.id)
     if (!post) {
         response.sendStatus(404);

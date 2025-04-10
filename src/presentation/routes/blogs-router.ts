@@ -2,10 +2,11 @@ import {Request, Response, Router} from "express";
 import {CreateBlogRequestModel} from "../models/CreateBlogRequestModel";
 import {blogs} from "../../store/db"
 import {UpdateBlogRequestModel} from "../models/UpdateBlogRequestModel";
+import {createBlogValidator} from "../midlewares/validation/blogValidation/validator";
 
 export const blogsRouter = Router({})
 
-blogsRouter.post('/', (request: CreateBlogRequestModel, response: Response) => {
+blogsRouter.post('/', createBlogValidator, (request: CreateBlogRequestModel, response: Response) => {
    const newBlog = {
        id: new Date().getTime().toString(),
        name: request.body.name,
@@ -40,7 +41,7 @@ blogsRouter.delete('/:id',(request: Request<{id: string}>, response: Response) =
    response.sendStatus(204)
 })
 
-blogsRouter.put('/:id', (request: UpdateBlogRequestModel, response: Response) => {
+blogsRouter.put('/:id', createBlogValidator, (request: UpdateBlogRequestModel, response: Response) => {
      let blog = blogs.find(b => b.id === request.params.id)
      if (!blog) {
          response.sendStatus(404);
