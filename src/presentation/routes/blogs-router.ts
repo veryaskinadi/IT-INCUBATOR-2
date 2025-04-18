@@ -3,6 +3,8 @@ import {CreateBlogRequestModel} from "../models/CreateBlogRequestModel";
 import {blogs} from "../../store/db"
 import {UpdateBlogRequestModel} from "../models/UpdateBlogRequestModel";
 import {createBlogValidator} from "../midlewares/validation/blogValidation/validator";
+import * as blogsService from "../../core/blogs/blogsService";
+
 
 export const blogsRouter = Router({})
 
@@ -18,8 +20,9 @@ blogsRouter.post('/', createBlogValidator, (request: CreateBlogRequestModel, res
    response.status(201).send(newBlog);
 })
 
-blogsRouter.get('/', (request: Request, response: Response) => {
-   response.status(200).send(blogs)
+blogsRouter.get('/', async (request: Request, response: Response) => {
+    const blogs = await blogsService.getAllBlogs()
+    response.status(200).send(blogs)
 })
 
 blogsRouter.get('/:id',(request: Request<{id: string}>, response: Response) => {

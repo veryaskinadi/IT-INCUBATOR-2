@@ -1,3 +1,19 @@
+import {MongoClient} from "mongodb";
+
+const url = "mongodb://localhost:27272"
+export const client = new MongoClient(url)
+
+export async function runDb() {
+    try {
+        await client.connect()
+        await client.db("project").command({ ping: 1})
+        console.log("Connected successfully to mongo server")
+    } catch(err) {
+        console.log("Can't connect to db", err)
+        await client.close()
+    }
+}
+
 type Blog = {
     id: string,
     name: string,
