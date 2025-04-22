@@ -1,31 +1,26 @@
 import {Request, Response, Router} from "express";
 import {blogs, posts} from "../../store/db"
-import {CreatePostRequestModel} from "../models/CreatePostRequestModel";
-import {CreatePostForClientModel} from "../models/CreatePostForClientModel";
-import {blogsRouter} from "./blogs-router";
-import {UpdatePostRequestModel} from "../models/UpdatePostRequestModel";
-import {createPostValidator} from "../midlewares/validation/postValidation/validator";
+import {CreatePostRequestModel} from "../models/CreatePostRequestModel"
+import {CreatePostForClientModel} from "../models/CreatePostForClientModel"
+import {blogsRouter} from "./blogs-router"
+import * as blogsService from "../../core/blogs/blogsService"
+import * as postsService from "../../core/posts/postsService"
+import {UpdatePostRequestModel} from "../models/UpdatePostRequestModel"
+import {createPostValidator} from "../midlewares/validation/postValidation/validator"
+
 
 export const postsRouter = Router({})
 
-postsRouter.post('/', createPostValidator, (request: CreatePostRequestModel, response: Response) => {
-    const newPost = {
-        id: new Date().getTime().toString(),
-        ...request.body,
-    }
-    posts.push(newPost)
+postsRouter.post('/', (request: CreatePostRequestModel, response: Response) => {
+   try {
+       const post = postsService.createPost(request.body)
+       response.status(201).send(post);
+   } catch (error) {
+       console.log(error)
+       throw error
+       response.sendStatus(401)
+   }
 
-    const blog = blogs.find(b => b.id === newPost.blogId)
-    if (!blog) {
-        response.sendStatus(400)
-        return
-    }
-
-    const PostForClient: CreatePostForClientModel = {
-        ...newPost,
-        blogName: blog.name,
-    }
-    response.status(201).send(PostForClient);
 })
 
 postsRouter.get('/', (request: Request, response: Response) => {

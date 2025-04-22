@@ -1,6 +1,6 @@
-export type Blog = {
+export type CreateBlogModel = {
     name: string;
     description: string;
     websiteUrl: string;
-    id: string;
+    createdAt: string;
 }

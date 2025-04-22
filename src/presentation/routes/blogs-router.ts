@@ -1,23 +1,16 @@
 import {Request, Response, Router} from "express";
 import {CreateBlogRequestModel} from "../models/CreateBlogRequestModel";
-import {blogs} from "../../store/db"
 import {UpdateBlogRequestModel} from "../models/UpdateBlogRequestModel";
 import {createBlogValidator} from "../midlewares/validation/blogValidation/validator";
 import * as blogsService from "../../core/blogs/blogsService";
+import {authMiddleware} from "../midlewares/auth-middleware";
 
 
 export const blogsRouter = Router({})
 
-blogsRouter.post('/', createBlogValidator, (request: CreateBlogRequestModel, response: Response) => {
-   const newBlog = {
-       id: new Date().getTime().toString(),
-       name: request.body.name,
-       description: request.body.description,
-       websiteUrl: request.body.websiteUrl
-       }
-
-   blogs.push(newBlog)
-   response.status(201).send(newBlog);
+blogsRouter.post('/', authMiddleware, createBlogValidator, async(request: CreateBlogRequestModel, response: Response) => {
+    const newBlog = await blogsService.createNewBlog(request.body)
+    response.status(201).send(newBlog);
 })
 
 blogsRouter.get('/', async (request: Request, response: Response) => {
@@ -25,32 +18,31 @@ blogsRouter.get('/', async (request: Request, response: Response) => {
     response.status(200).send(blogs)
 })
 
-blogsRouter.get('/:id',(request: Request<{id: string}>, response: Response) => {
-   const blog = blogs.find(b => b.id === request.params.id)
-   if(blog) {
-     response.status(200).send(blog)
+blogsRouter.get('/:id',async(request: Request<{id: string}>, response: Response) => {
+    const blog = await blogsService.getBlogId(request.params.id)
+    if(blog) {
+        response.status(200).send(blog)
    } else {
        response.sendStatus(404)
    }
 })
 
-blogsRouter.delete('/:id',(request: Request<{id: string}>, response: Response) => {
-   const blogIndex = blogs.findIndex(b => b.id === request.params.id)
-   if(blogIndex === -1) {
-     response.sendStatus(404)
-     return
-   }
-   blogs.splice(blogIndex, 1)
-   response.sendStatus(204)
+blogsRouter.delete('/:id', authMiddleware, async(request: Request<{id: string}>, response: Response) => {
+    const blog = await blogsService.getBlogId(request.params.id)
+    if(!blog) {
+        response.sendStatus(404)
+    }
+    await blogsService.deleteBlog(request.params.id)
+    response.sendStatus(200)
 })
 
-blogsRouter.put('/:id', createBlogValidator, (request: UpdateBlogRequestModel, response: Response) => {
-     let blog = blogs.find(b => b.id === request.params.id)
-     if (!blog) {
-         response.sendStatus(404);
-         return
-     }
-
-     blog = Object.assign(blog, request.body)
-      response.sendStatus(204);
- });
+// blogsRouter.put('/:id', authMiddleware, createBlogValidator, (request: UpdateBlogRequestModel, response: Response) => {
+//      let blog = blogs.find(b => b.id === request.params.id)
+//      if (!blog) {
+//          response.sendStatus(404);
+//          return
+//      }
+//
+//      blog = Object.assign(blog, request.body)
+//       response.sendStatus(204);
+//  })

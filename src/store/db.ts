@@ -1,4 +1,5 @@
-import {MongoClient} from "mongodb";
+import {MongoClient, ObjectId} from "mongodb";
+export {ObjectId} from "mongodb";
 
 const url = "mongodb://localhost:27272"
 export const client = new MongoClient(url)
