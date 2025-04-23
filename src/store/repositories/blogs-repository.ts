@@ -1,6 +1,7 @@
-import {Blog} from "../models/BlogModel";
+import {Blog} from "../models/BlogModel"
 import {client, ObjectId} from "../db"
-import {CreateBlogModel} from "../models/CreateBlogModel";
+import {CreateBlogModel} from "../models/CreateBlogModel"
+import {UpdateBlogModel} from "../models/UpdateBlogModel"
 
 const database = client.db('project'); // Имя базы данных
 const collection = database.collection('blogs'); // Коллекция блогов
@@ -44,4 +45,9 @@ export const getBlogId = async (blogId: string) : Promise<Blog | null> => {
 export const deleteBlog = async (blogId: string): Promise<void> => {
     const objectId = new ObjectId(blogId)
     collection.deleteOne( {_id: objectId})
+}
+
+export const updateBlog = async (blogId: string, data: UpdateBlogModel): Promise<void> => {
+    const objectId = new ObjectId(blogId)
+    collection.updateOne({_id: objectId},{ $set: data})
 }

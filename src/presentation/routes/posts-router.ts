@@ -17,7 +17,6 @@ postsRouter.post('/', (request: CreatePostRequestModel, response: Response) => {
        response.status(201).send(post);
    } catch (error) {
        console.log(error)
-       throw error
        response.sendStatus(401)
    }
 

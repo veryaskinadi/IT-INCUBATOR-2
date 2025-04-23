@@ -1,6 +1,7 @@
-import * as blogsRepository from "../../store/repositories/blogs-repository";
-import {Blog} from "../models/BlogModel";
-import {CreateBlogModel} from "../models/CreateBlogModel";
+import * as blogsRepository from "../../store/repositories/blogs-repository"
+import {Blog} from "../models/BlogModel"
+import {CreateBlogModel} from "../models/CreateBlogModel"
+import {UpdateBlogModel} from "../models/UpdateBlogModel"
 
 
 export const getAllBlogs = async (): Promise<Blog[]> => {
@@ -40,4 +41,8 @@ export const getBlogId = async (blogId: string): Promise<Blog | null> => {
 
 export const deleteBlog = async (blogId: string): Promise<void> => {
     await blogsRepository.deleteBlog(blogId)
+}
+
+export const updateBlog = async (blogId: string, data: UpdateBlogModel): Promise<void> => {
+        await blogsRepository.updateBlog(blogId, data)
 }

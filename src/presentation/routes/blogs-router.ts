@@ -36,13 +36,11 @@ blogsRouter.delete('/:id', authMiddleware, async(request: Request<{id: string}>,
     response.sendStatus(200)
 })
 
-// blogsRouter.put('/:id', authMiddleware, createBlogValidator, (request: UpdateBlogRequestModel, response: Response) => {
-//      let blog = blogs.find(b => b.id === request.params.id)
-//      if (!blog) {
-//          response.sendStatus(404);
-//          return
-//      }
-//
-//      blog = Object.assign(blog, request.body)
-//       response.sendStatus(204);
-//  })
+blogsRouter.put('/:id', authMiddleware, createBlogValidator, async (request: UpdateBlogRequestModel, response: Response) => {
+    const blog = await blogsService.getBlogId(request.params.id)
+    if(!blog) {
+        response.sendStatus(404)
+    }
+      await blogsService.updateBlog(request.params.id, request.body)
+      response.sendStatus(204);
+ })
