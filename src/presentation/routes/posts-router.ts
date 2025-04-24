@@ -22,7 +22,8 @@ postsRouter.post('/', (request: CreatePostRequestModel, response: Response) => {
 
 })
 
-postsRouter.get('/', (request: Request, response: Response) => {
+postsRouter.get('/', async (request: Request, response: Response) => {
+    const posts = await postsService.getAllPosts()
     response.status(200).send(posts)
 })
 

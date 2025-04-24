@@ -1,7 +1,7 @@
 import {CreatePostModel} from "../models/CreatePostModel"
-import {Post} from "../models/PostModel"
+import {Post, PostWithBlog} from "../models/PostModel"
 import * as blogsService from "../blogs/blogsService"
-import * as postRepository from "../../store/repositories/posts-repository"
+import * as postsRepository from "../../store/repositories/posts-repository"
 
 
 export const createPost = async (data: CreatePostModel): Promise<Post> => {
@@ -14,10 +14,16 @@ export const createPost = async (data: CreatePostModel): Promise<Post> => {
         createdAt: new Date().toISOString(),
     }
 
-    const post = await postRepository.createPost(postForMongo)
+    const post = await postsRepository.createPost(postForMongo)
 
     return {
         ...post,
         blogName: blog.name,
     }
+}
+
+export const getAllPosts = async (): Promise<PostWithBlog[]> => {
+    const posts = await postsRepository.getAllPost()
+    console.log (posts)
+    return posts
 }
